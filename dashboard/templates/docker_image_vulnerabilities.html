@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">
+
+    {{ image_name }}
+
+</h2>
+
+{% if severity %}
+
+<h5 class="mb-3">
+
+    Severity Filter:
+    <span class="badge bg-danger">
+        {{ severity }}
+    </span>
+
+</h5>
+
+{% endif %}
+
+<table class="table table-hover table-bordered bg-white">
+
+    <thead class="table-dark">
+
+        <tr>
+            <th>Severity</th>
+            <th>Vulnerability</th>
+            <th>Package</th>
+	    <th>Title</th>
+	    <th>Description</th>
+            <th>Installed Version</th>
+            <th>Fixed Version</th>
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+    {% for item in data %}
+
+        <tr>
+
+            <td>{{ item.severity }}</td>
+
+            <td>{{ item.vulnerability_id }}</td>
+
+            <td>{{ item.package_name }}</td>
+
+	    <td>{{ item.title }}</td>
+
+	    <td style="max-width:500px; word-wrap:break-word;">
+
+           	 {{ item.description }}
+
+   	    </td>
+
+            <td>{{ item.installed_version }}</td>
+
+            <td>{{ item.fixed_version }}</td>
+
+        </tr>
+
+    {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}

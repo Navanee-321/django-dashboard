@@ -95,8 +95,64 @@ def repo_vulnerabilities(request):
 
 def docker_dashboard(request):
 
-    data = DockerVulnerability.objects.all()
+    image_data = []
+
+    unique_images = DockerVulnerability.objects.values_list(
+        'image_name',
+        flat=True
+    ).distinct()
+
+    for image in unique_images:
+
+        image_data.append({
+
+            'image_name': image,
+
+            'critical': DockerVulnerability.objects.filter(
+                image_name=image,
+                severity='CRITICAL'
+            ).count(),
+
+            'high': DockerVulnerability.objects.filter(
+                image_name=image,
+                severity='HIGH'
+            ).count(),
+
+            'medium': DockerVulnerability.objects.filter(
+                image_name=image,
+                severity='MEDIUM'
+            ).count(),
+
+            'low': DockerVulnerability.objects.filter(
+                image_name=image,
+                severity='LOW'
+            ).count(),
+
+        })
 
     return render(request, 'docker.html', {
-        'data': data
+        'data': image_data
+    })
+
+
+def docker_image_vulnerabilities(request):
+
+    image_name = request.GET.get('image')
+
+    severity = request.GET.get('severity')
+
+    data = DockerVulnerability.objects.filter(
+        image_name=image_name
+    )
+
+    if severity:
+
+        data = data.filter(
+            severity__iexact=severity
+        )
+
+    return render(request, 'docker_image_vulnerabilities.html', {
+        'data': data,
+        'image_name': image_name,
+        'severity': severity,
     })

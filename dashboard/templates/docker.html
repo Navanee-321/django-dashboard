@@ -2,31 +2,99 @@
 
 {% block content %}
 
-<h2 class="mb-4">Docker Vulnerabilities</h2>
+<h2 class="mb-4">Docker Images</h2>
 
-<table class="table table-bordered table-striped table-hover">
+<table class="table table-hover table-bordered bg-white">
 
-<thead class="table-dark">
-<tr>
-    <th>Image</th>
-    <th>Severity</th>
-    <th>Vulnerability</th>
-    <th>Package</th>
-</tr>
-</thead>
+    <thead class="table-dark">
 
-<tbody>
+        <tr>
+            <th>Image</th>
+            <th>Critical</th>
+            <th>High</th>
+            <th>Medium</th>
+            <th>Low</th>
+        </tr>
 
-{% for item in data %}
-<tr>
-    <td>{{ item.image_name }}</td>
-    <td>{{ item.severity }}</td>
-    <td>{{ item.vulnerability_id }}</td>
-    <td>{{ item.package_name }}</td>
-</tr>
-{% endfor %}
+    </thead>
 
-</tbody>
+    <tbody>
+
+    {% for item in data %}
+
+        <tr>
+
+            <td>
+
+                <a href="/docker-image/?image={{ item.image_name }}">
+
+                    {{ item.image_name }}
+
+                </a>
+
+            </td>
+
+            <td>
+
+                <a href="/docker-image/?image={{ item.image_name }}&severity=CRITICAL">
+
+                    <span class="badge bg-danger">
+
+                        {{ item.critical }}
+
+                    </span>
+
+                </a>
+
+            </td>
+
+            <td>
+
+                <a href="/docker-image/?image={{ item.image_name }}&severity=HIGH">
+
+                    <span class="badge bg-warning text-dark">
+
+                        {{ item.high }}
+
+                    </span>
+
+                </a>
+
+            </td>
+
+            <td>
+
+                <a href="/docker-image/?image={{ item.image_name }}&severity=MEDIUM">
+
+                    <span class="badge bg-info text-dark">
+
+                        {{ item.medium }}
+
+                    </span>
+
+                </a>
+
+            </td>
+
+            <td>
+
+                <a href="/docker-image/?image={{ item.image_name }}&severity=LOW">
+
+                    <span class="badge bg-secondary">
+
+                        {{ item.low }}
+
+                    </span>
+
+                </a>
+
+            </td>
+
+        </tr>
+
+    {% endfor %}
+
+    </tbody>
 
 </table>
 

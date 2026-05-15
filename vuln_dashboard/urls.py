@@ -6,6 +6,7 @@ from dashboard.views import (
     source_dashboard,
     docker_dashboard,
     repo_vulnerabilities,
+    docker_image_vulnerabilities,
 )
 
 urlpatterns = [
@@ -19,5 +20,7 @@ urlpatterns = [
     path('docker/', docker_dashboard),
 
     path('repo/', repo_vulnerabilities),
+
+    path('docker-image/', docker_image_vulnerabilities),
 
 ]
