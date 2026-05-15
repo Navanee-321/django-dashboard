@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">
+
+    {{ repo_name }}
+
+</h2>
+
+{% if severity %}
+
+<h5 class="mb-3">
+
+    Severity Filter:
+    <span class="badge bg-danger">
+        {{ severity }}
+    </span>
+
+</h5>
+
+{% endif %}
+
+<table class="table table-hover table-bordered bg-white">
+
+    <thead class="table-dark">
+
+        <tr>
+            <th>Severity</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Scanner</th>
+            <th>File</th>
+            <th>Line</th>
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+    {% for item in data %}
+
+        <tr>
+
+            <td>{{ item.severity }}</td>
+
+            <td>{{ item.title }}</td>
+
+            <td>{{ item.description }}</td>
+
+            <td>{{ item.scanner }}</td>
+
+            <td>{{ item.file_path }}</td>
+
+            <td>{{ item.line_number }}</td>
+
+        </tr>
+
+    {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}

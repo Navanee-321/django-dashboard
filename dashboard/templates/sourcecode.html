@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">Repositories</h2>
+
+<table class="table table-hover table-bordered bg-white">
+
+    <thead class="table-dark">
+
+        <tr>
+            <th>Repository</th>
+            <th>Critical</th>
+            <th>High</th>
+            <th>Medium</th>
+            <th>Low</th>
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+    {% for item in data %}
+
+        <tr>
+
+            <td>
+
+                <a href="/repo/?repo={{ item.repo_name }}">
+
+                    {{ item.repo_name }}
+
+                </a>
+
+            </td>
+
+            <td>
+
+                <a href="/repo/?repo={{ item.repo_name }}&severity=CRITICAL">
+
+                    <span class="badge bg-danger">
+
+                        {{ item.critical }}
+
+                    </span>
+
+                </a>
+
+            </td>
+
+            <td>
+
+                <a href="/repo/?repo={{ item.repo_name }}&severity=HIGH">
+
+                    <span class="badge bg-warning text-dark">
+
+                        {{ item.high }}
+
+                    </span>
+
+                </a>
+
+            </td>
+
+            <td>
+
+                <a href="/repo/?repo={{ item.repo_name }}&severity=MEDIUM">
+
+                    <span class="badge bg-info text-dark">
+
+                        {{ item.medium }}
+
+                    </span>
+
+                </a>
+
+            </td>
+
+            <td>
+
+                <a href="/repo/?repo={{ item.repo_name }}&severity=LOW">
+
+                    <span class="badge bg-secondary">
+
+                        {{ item.low }}
+
+                    </span>
+
+                </a>
+
+            </td>
+
+        </tr>
+
+    {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}

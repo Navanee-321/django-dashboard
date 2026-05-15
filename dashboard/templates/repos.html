@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">Repositories</h2>
+
+<table class="table table-bordered table-striped table-hover">
+
+<thead class="table-dark">
+<tr>
+    <th>Repository</th>
+    <th>Branch</th>
+    <th>Status</th>
+    <th>Scanners</th>
+    <th>Total Vulns</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for item in data %}
+<tr>
+    <td>{{ item.repo_name }}</td>
+    <td>{{ item.branch_name }}</td>
+    <td>{{ item.status }}</td>
+    <td>{{ item.scanner_types }}</td>
+    <td>
+    <a href="/repo/{{ item.repo_name }}/">
+        {{ item.total_vulnerabilities }}
+    </a>
+</td>
+</tr>
+{% endfor %}
+
+</tbody>
+
+</table>
+
+{% endblock %}

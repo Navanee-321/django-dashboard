@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">Security Dashboard</h2>
+
+<div class="row g-4">
+
+    <div class="col-md-3">
+        <div class="card-box repo">
+            <h5>Source Code Vulns</h5>
+            <h1>{{ source_total }}</h1>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card-box critical">
+            <h5>Critical</h5>
+            <h1>{{ critical }}</h1>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card-box high">
+            <h5>High</h5>
+            <h1>{{ high }}</h1>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card-box medium">
+            <h5>Docker Vulns</h5>
+            <h1>{{ docker_total }}</h1>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
