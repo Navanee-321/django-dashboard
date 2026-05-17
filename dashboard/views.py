@@ -3,29 +3,82 @@ from django.shortcuts import render
 from .models import (
     SourceCodeVulnerability,
     DockerVulnerability,
+    AWSInspectorFinding,
 )
 
 
 def home(request):
 
-    source_total = SourceCodeVulnerability.objects.count()
-
-    docker_total = DockerVulnerability.objects.count()
-
-    critical = SourceCodeVulnerability.objects.filter(
+    source_critical = SourceCodeVulnerability.objects.filter(
         severity='CRITICAL'
     ).count()
 
-    high = SourceCodeVulnerability.objects.filter(
+    source_high = SourceCodeVulnerability.objects.filter(
         severity='HIGH'
     ).count()
 
-    return render(request, 'home.html', {
-        'source_total': source_total,
-        'docker_total': docker_total,
-        'critical': critical,
-        'high': high,
-    })
+    source_medium = SourceCodeVulnerability.objects.filter(
+        severity='MEDIUM'
+    ).count()
+
+    source_low = SourceCodeVulnerability.objects.filter(
+        severity='LOW'
+    ).count()
+
+
+    docker_critical = DockerVulnerability.objects.filter(
+        severity='CRITICAL'
+    ).count()
+
+    docker_high = DockerVulnerability.objects.filter(
+        severity='HIGH'
+    ).count()
+
+    docker_medium = DockerVulnerability.objects.filter(
+        severity='MEDIUM'
+    ).count()
+
+    docker_low = DockerVulnerability.objects.filter(
+        severity='LOW'
+    ).count()
+
+
+    aws_critical = AWSInspectorFinding.objects.using(
+        'aws_db'
+    ).filter(severity='Critical').count()
+
+    aws_high = AWSInspectorFinding.objects.using(
+        'aws_db'
+    ).filter(severity='High').count()
+
+    aws_medium = AWSInspectorFinding.objects.using(
+        'aws_db'
+    ).filter(severity='Medium').count()
+
+    aws_low = AWSInspectorFinding.objects.using(
+        'aws_db'
+    ).filter(severity='Low').count()
+
+
+    context = {
+
+        'source_critical': source_critical,
+        'source_high': source_high,
+        'source_medium': source_medium,
+        'source_low': source_low,
+
+        'docker_critical': docker_critical,
+        'docker_high': docker_high,
+        'docker_medium': docker_medium,
+        'docker_low': docker_low,
+
+        'aws_critical': aws_critical,
+        'aws_high': aws_high,
+        'aws_medium': aws_medium,
+        'aws_low': aws_low,
+    }
+
+    return render(request, 'home.html', context)
 
 
 def source_dashboard(request):
@@ -155,4 +208,58 @@ def docker_image_vulnerabilities(request):
         'data': data,
         'image_name': image_name,
         'severity': severity,
+    })
+
+from django.db.models import Count
+from django.db import models
+
+
+def aws_dashboard(request):
+
+    severity = request.GET.get('severity')
+
+    if severity:
+
+        data = AWSInspectorFinding.objects.using(
+            'aws_db'
+        ).filter(
+            severity=severity
+        )[:100]
+
+        return render(request, 'aws_details.html', {
+            'data': data,
+            'severity': severity,
+        })
+
+
+    aws_summary = AWSInspectorFinding.objects.using(
+        'aws_db'
+    ).values(
+        'account_id'
+    ).annotate(
+
+        critical=Count(
+            'id',
+            filter=models.Q(severity='Critical')
+        ),
+
+        high=Count(
+            'id',
+            filter=models.Q(severity='High')
+        ),
+
+        medium=Count(
+            'id',
+            filter=models.Q(severity='Medium')
+        ),
+
+        low=Count(
+            'id',
+            filter=models.Q(severity='Low')
+        ),
+
+    )
+
+    return render(request, 'aws.html', {
+        'aws_summary': aws_summary
     })

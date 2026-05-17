@@ -6,6 +6,7 @@ from dashboard.views import (
     source_dashboard,
     docker_dashboard,
     repo_dashboard,
+    aws_dashboard,
 )
 
 urlpatterns = [
@@ -16,4 +17,5 @@ urlpatterns = [
     path('sourcecode/', source_dashboard),
     path('docker/', docker_dashboard),
     path('repos/', repo_dashboard),
+    path('aws/', aws_dashboard, name='aws'),
 ]

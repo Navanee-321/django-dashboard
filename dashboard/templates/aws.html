@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">AWS Vulnerabilities</h2>
+
+<table class="table table-bordered bg-white">
+
+    <thead class="table-dark">
+
+        <tr>
+
+            <th>Account ID</th>
+
+            <th>Critical</th>
+
+            <th>High</th>
+
+            <th>Medium</th>
+
+            <th>Low</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        {% for item in aws_summary %}
+
+        <tr>
+
+            <td>{{ item.account_id }}</td>
+
+            <td>
+                <a href="/aws/?severity=Critical">
+                    {{ item.critical }}
+                </a>
+            </td>
+
+            <td>
+                <a href="/aws/?severity=High">
+                    {{ item.high }}
+                </a>
+            </td>
+
+            <td>
+                <a href="/aws/?severity=Medium">
+                    {{ item.medium }}
+                </a>
+            </td>
+
+            <td>
+                <a href="/aws/?severity=Low">
+                    {{ item.low }}
+                </a>
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}

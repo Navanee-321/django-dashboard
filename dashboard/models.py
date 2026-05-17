@@ -35,3 +35,18 @@ class DockerVulnerability(models.Model):
         managed = False
         db_table = 'docker_vulnerabilities'
 
+class AWSInspectorFinding(models.Model):
+
+    severity = models.TextField(null=True)
+
+    title = models.TextField(null=True)
+
+    description = models.TextField(null=True)
+
+    account_id = models.TextField(null=True)
+
+    region = models.TextField(null=True)
+
+    class Meta:
+        managed = False
+        db_table = '"aws_2"."aws_inspector_finding"'

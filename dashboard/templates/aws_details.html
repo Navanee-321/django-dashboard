@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">
+    AWS {{ severity }} Vulnerabilities
+</h2>
+
+<table class="table table-bordered bg-white">
+
+    <thead class="table-dark">
+
+        <tr>
+
+            <th>Severity</th>
+
+            <th>Title</th>
+
+            <th>Description</th>
+
+            <th>Account ID</th>
+
+            <th>Region</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        {% for item in data %}
+
+        <tr>
+
+            <td>{{ item.severity }}</td>
+
+            <td>{{ item.title }}</td>
+
+            <td>{{ item.description }}</td>
+
+            <td>{{ item.account_id }}</td>
+
+            <td>{{ item.region }}</td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}
