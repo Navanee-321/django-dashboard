@@ -7,7 +7,10 @@ from dashboard.views import (
     docker_dashboard,
     repo_vulnerabilities,
     docker_image_vulnerabilities,
+    aws_home,
     aws_dashboard,
+    ec2_dashboard,
+    s3_dashboard,
 )
 
 urlpatterns = [
@@ -24,6 +27,12 @@ urlpatterns = [
 
     path('docker-image/', docker_image_vulnerabilities),
 
-    path('aws/', aws_dashboard, name='aws'),
+    path('aws/', aws_home, name='aws-home'),
+
+    path('aws/inspector/', aws_dashboard, name='aws-inspector'),
+
+    path('ec2/', ec2_dashboard, name='ec2'),
+
+    path('s3/', s3_dashboard, name='s3'),
 
 ]

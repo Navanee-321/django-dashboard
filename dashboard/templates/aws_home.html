@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">AWS Services</h2>
+
+<div class="row">
+
+    {% for service in services %}
+
+    <div class="col-md-4 mb-4">
+
+        <div class="card shadow-sm">
+
+            <div class="card-body">
+
+                <h4>{{ service.name }}</h4>
+
+                <p>{{ service.description }}</p>
+
+                <a href="{{ service.url }}" class="btn btn-dark">
+                    Open
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

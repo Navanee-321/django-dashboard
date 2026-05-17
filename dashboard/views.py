@@ -4,6 +4,8 @@ from .models import (
     SourceCodeVulnerability,
     DockerVulnerability,
     AWSInspectorFinding,
+    AWSEC2Instance,
+    AWSS3Bucket,
 )
 
 
@@ -80,6 +82,33 @@ def home(request):
 
     return render(request, 'home.html', context)
 
+def aws_home(request):
+
+    services = [
+
+        {
+            'name': 'Inspector',
+            'url': '/aws/inspector/',
+            'description': 'AWS Inspector Vulnerability Findings'
+        },
+
+        {
+            'name': 'EC2',
+            'url': '/ec2/',
+            'description': 'AWS EC2 Inventory'
+        },
+
+        {
+            'name': 'S3',
+            'url': '/s3/',
+            'description': 'AWS S3 Bucket Inventory'
+        },
+
+    ]
+
+    return render(request, 'aws_home.html', {
+        'services': services
+    })
 
 def source_dashboard(request):
 
@@ -262,4 +291,24 @@ def aws_dashboard(request):
 
     return render(request, 'aws.html', {
         'aws_summary': aws_summary
+    })
+
+def ec2_dashboard(request):
+
+    data = AWSEC2Instance.objects.using(
+        'aws_db'
+    ).all()[:100]
+
+    return render(request, 'ec2.html', {
+        'data': data
+    })
+
+def s3_dashboard(request):
+
+    data = AWSS3Bucket.objects.using(
+        'aws_db'
+    ).all()[:100]
+
+    return render(request, 's3.html', {
+        'data': data
     })

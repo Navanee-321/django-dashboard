@@ -50,3 +50,43 @@ class AWSInspectorFinding(models.Model):
     class Meta:
         managed = False
         db_table = '"aws_2"."aws_inspector_finding"'
+
+class AWSEC2Instance(models.Model):
+
+    instance_id = models.TextField(
+        primary_key=True
+    )
+
+    instance_type = models.TextField(null=True)
+
+    instance_state = models.TextField(null=True)
+
+    public_ip_address = models.TextField(null=True)
+
+    private_ip_address = models.TextField(null=True)
+
+    region = models.TextField(null=True)
+
+    account_id = models.TextField(null=True)
+
+    class Meta:
+        managed = False
+        db_table = '"aws_2"."aws_ec2_instance"'
+
+class AWSS3Bucket(models.Model):
+
+    name = models.TextField(
+        primary_key=True
+    )
+
+    bucket_policy_is_public = models.BooleanField(null=True)
+
+    versioning_enabled = models.BooleanField(null=True)
+
+    region = models.TextField(null=True)
+
+    account_id = models.TextField(null=True)
+
+    class Meta:
+        managed = False
+        db_table = '"aws_2"."aws_s3_bucket"'

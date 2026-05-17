@@ -2,113 +2,49 @@
 
 {% block content %}
 
-<h2 class="mb-4">Security Dashboard</h2>
+<h1 class="mb-4">Security Dashboard</h1>
 
 <div class="row g-4">
 
-    <!-- Source Code -->
-
     <div class="col-md-4">
 
-        <div class="card-box repo">
+        <a href="/sourcecode/" style="text-decoration:none;">
 
-            <h5>Source Code Vulnerabilities</h5>
+            <div class="card-box repo">
 
-            <h1>{{ source_total }}</h1>
-
-            <div class="mt-3">
-
-                <a href="/sourcecode/?severity=CRITICAL" class="btn btn-light btn-sm">
-                    Critical: {{ source_critical }}
-                </a>
-
-                <a href="/sourcecode/?severity=HIGH" class="btn btn-light btn-sm">
-                    High: {{ source_high }}
-                </a>
-
-                <a href="/sourcecode/?severity=MEDIUM" class="btn btn-light btn-sm">
-                    Medium: {{ source_medium }}
-                </a>
-
-                <a href="/sourcecode/?severity=LOW" class="btn btn-light btn-sm">
-                    Low: {{ source_low }}
-                </a>
+                <h3>Source Code Vulnerabilities</h3>
 
             </div>
 
-        </div>
+        </a>
 
     </div>
 
-
-    <!-- Docker -->
-
     <div class="col-md-4">
 
-        <div class="card-box medium">
+        <a href="/docker/" style="text-decoration:none;">
 
-            <h5>Docker Vulnerabilities</h5>
+            <div class="card-box high">
 
-            <h1>{{ docker_total }}</h1>
-
-            <div class="mt-3">
-
-                <a href="/docker/?severity=CRITICAL" class="btn btn-dark btn-sm">
-                    Critical: {{ docker_critical }}
-                </a>
-
-                <a href="/docker/?severity=HIGH" class="btn btn-dark btn-sm">
-                    High: {{ docker_high }}
-                </a>
-
-                <a href="/docker/?severity=MEDIUM" class="btn btn-dark btn-sm">
-                    Medium: {{ docker_medium }}
-                </a>
-
-                <a href="/docker/?severity=LOW" class="btn btn-dark btn-sm">
-                    Low: {{ docker_low }}
-                </a>
+                <h3>Docker Vulnerabilities</h3>
 
             </div>
 
-        </div>
+        </a>
 
     </div>
 
-
-    <!-- AWS -->
-
     <div class="col-md-4">
 
-        <div class="card-box high">
+        <a href="/aws/" style="text-decoration:none;">
 
-            <h5>AWS Vulnerabilities</h5>
+            <div class="card-box critical">
 
-            <h1>
-                {{ aws_critical|add:aws_high|add:aws_medium|add:aws_low }}
-            </h1>
-
-            <div class="mt-3">
-
-                <a href="/aws/?severity=Critical" class="btn btn-light btn-sm">
-                    Critical: {{ aws_critical }}
-                </a>
-
-                <a href="/aws/?severity=High" class="btn btn-light btn-sm">
-                    High: {{ aws_high }}
-                </a>
-
-                <a href="/aws/?severity=Medium" class="btn btn-light btn-sm">
-                    Medium: {{ aws_medium }}
-                </a>
-
-                <a href="/aws/?severity=Low" class="btn btn-light btn-sm">
-                    Low: {{ aws_low }}
-                </a>
+                <h3>AWS Vulnerabilities</h3>
 
             </div>
 
-        </div>
+        </a>
 
     </div>
 

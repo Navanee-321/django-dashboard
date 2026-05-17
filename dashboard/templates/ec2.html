@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">AWS EC2 Instances</h2>
+
+<table class="table table-bordered table-hover bg-white">
+
+    <thead class="table-dark">
+
+        <tr>
+
+            <th>Instance ID</th>
+
+            <th>Instance Type</th>
+
+            <th>State</th>
+
+            <th>Public IP</th>
+
+            <th>Private IP</th>
+
+            <th>Region</th>
+
+            <th>Account ID</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        {% for item in data %}
+
+        <tr>
+
+            <td>{{ item.instance_id }}</td>
+
+            <td>{{ item.instance_type }}</td>
+
+            <td>{{ item.instance_state }}</td>
+
+            <td>{{ item.public_ip_address }}</td>
+
+            <td>{{ item.private_ip_address }}</td>
+
+            <td>{{ item.region }}</td>
+
+            <td>{{ item.account_id }}</td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">AWS S3 Buckets</h2>
+
+<table class="table table-bordered table-hover bg-white">
+
+    <thead class="table-dark">
+
+        <tr>
+
+            <th>Bucket Name</th>
+
+            <th>Public</th>
+
+            <th>Versioning</th>
+
+            <th>Region</th>
+
+            <th>Account ID</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        {% for item in data %}
+
+        <tr>
+
+            <td>{{ item.name }}</td>
+
+            <td>{{ item.bucket_policy_is_public }}</td>
+
+            <td>{{ item.versioning_enabled }}</td>
+
+            <td>{{ item.region }}</td>
+
+            <td>{{ item.account_id }}</td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}
