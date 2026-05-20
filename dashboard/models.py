@@ -9,6 +9,8 @@ class SourceCodeVulnerability(models.Model):
     severity = models.TextField(null=True)
     title = models.TextField(null=True)
     description = models.TextField(null=True)
+    impact = models.TextField(null=True)
+    recommendation = models.TextField(null=True)
     file_path = models.TextField(null=True)
     line_number = models.IntegerField(null=True)
     created_at = models.DateTimeField(null=True)

@@ -6,45 +6,89 @@
 
 <div class="row g-4">
 
+    <!-- Source Code -->
+
     <div class="col-md-4">
 
-        <a href="/sourcecode/" style="text-decoration:none;">
+        <div class="card-box repo">
 
-            <div class="card-box repo">
+            <div>
 
                 <h3>Source Code Vulnerabilities</h3>
 
+                <hr>
+
+                <h5>Total: {{ source_total }}</h5>
+
+                <p class="mb-1">Critical: {{ source_critical }}</p>
+
+                <p class="mb-1">High: {{ source_high }}</p>
+
+                <p class="mb-1">Medium: {{ source_medium }}</p>
+
+                <p class="mb-1">Low: {{ source_low }}</p>
+
             </div>
 
-        </a>
+        </div>
 
     </div>
 
+
+    <!-- Docker -->
+
     <div class="col-md-4">
 
-        <a href="/docker/" style="text-decoration:none;">
+        <div class="card-box high">
 
-            <div class="card-box high">
+            <div>
 
                 <h3>Docker Vulnerabilities</h3>
 
+                <hr>
+
+                <h5>Total: {{ docker_total }}</h5>
+
+                <p class="mb-1">Critical: {{ docker_critical }}</p>
+
+                <p class="mb-1">High: {{ docker_high }}</p>
+
+                <p class="mb-1">Medium: {{ docker_medium }}</p>
+
+                <p class="mb-1">Low: {{ docker_low }}</p>
+
             </div>
 
-        </a>
+        </div>
 
     </div>
 
+
+    <!-- AWS -->
+
     <div class="col-md-4">
 
-        <a href="/aws/" style="text-decoration:none;">
+        <div class="card-box critical">
 
-            <div class="card-box critical">
+            <div>
 
                 <h3>AWS Vulnerabilities</h3>
 
+                <hr>
+
+                <h5>Total: {{ aws_total }}</h5>
+
+                <p class="mb-1">Critical: {{ aws_critical }}</p>
+
+                <p class="mb-1">High: {{ aws_high }}</p>
+
+                <p class="mb-1">Medium: {{ aws_medium }}</p>
+
+                <p class="mb-1">Low: {{ aws_low }}</p>
+
             </div>
 
-        </a>
+        </div>
 
     </div>
 

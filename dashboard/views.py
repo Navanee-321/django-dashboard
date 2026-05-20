@@ -11,6 +11,8 @@ from .models import (
 
 def home(request):
 
+    source_total = SourceCodeVulnerability.objects.count()
+
     source_critical = SourceCodeVulnerability.objects.filter(
         severity='CRITICAL'
     ).count()
@@ -28,6 +30,8 @@ def home(request):
     ).count()
 
 
+    docker_total = DockerVulnerability.objects.count()
+
     docker_critical = DockerVulnerability.objects.filter(
         severity='CRITICAL'
     ).count()
@@ -44,6 +48,10 @@ def home(request):
         severity='LOW'
     ).count()
 
+
+    aws_total = AWSInspectorFinding.objects.using(
+        'aws_db'
+    ).count()
 
     aws_critical = AWSInspectorFinding.objects.using(
         'aws_db'
@@ -64,16 +72,19 @@ def home(request):
 
     context = {
 
+        'source_total': source_total,
         'source_critical': source_critical,
         'source_high': source_high,
         'source_medium': source_medium,
         'source_low': source_low,
 
+        'docker_total': docker_total,
         'docker_critical': docker_critical,
         'docker_high': docker_high,
         'docker_medium': docker_medium,
         'docker_low': docker_low,
 
+        'aws_total': aws_total,
         'aws_critical': aws_critical,
         'aws_high': aws_high,
         'aws_medium': aws_medium,
