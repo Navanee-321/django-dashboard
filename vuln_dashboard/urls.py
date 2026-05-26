@@ -11,6 +11,7 @@ from dashboard.views import (
     aws_dashboard,
     ec2_dashboard,
     s3_dashboard,
+    ai_assistant,
 )
 
 urlpatterns = [
@@ -34,5 +35,7 @@ urlpatterns = [
     path('ec2/', ec2_dashboard, name='ec2'),
 
     path('s3/', s3_dashboard, name='s3'),
+
+    path('ai/', ai_assistant, name='ai'),
 
 ]

@@ -31,6 +31,8 @@
             <th>Package</th>
 	    <th>Title</th>
 	    <th>Description</th>
+	    <th>Impact</th>
+            <th>Recommendations</th>
             <th>Installed Version</th>
             <th>Fixed Version</th>
         </tr>
@@ -56,6 +58,10 @@
            	 {{ item.description }}
 
    	    </td>
+
+	    <td>{{ item.vulnerability_impact }}</td>
+	   
+	    <td>{{ item.recommendations }}</td>
 
             <td>{{ item.installed_version }}</td>
 

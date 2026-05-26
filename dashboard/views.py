@@ -323,3 +323,147 @@ def s3_dashboard(request):
     return render(request, 's3.html', {
         'data': data
     })
+
+def ai_assistant(request):
+
+    question = None
+
+    results = None
+
+    total_count = 0
+
+
+    if request.method == 'POST':
+
+        question = request.POST.get('question').lower()
+
+        severity = None
+
+
+        # Detect Severity
+
+        if 'critical' in question:
+
+            severity = 'CRITICAL'
+
+        elif 'high' in question:
+
+            severity = 'HIGH'
+
+        elif 'medium' in question:
+
+            severity = 'MEDIUM'
+
+        elif 'low' in question:
+
+            severity = 'LOW'
+
+
+        # SOURCE CODE
+
+        if 'source code' in question:
+
+            data = SourceCodeVulnerability.objects.all()
+
+            if severity:
+
+                data = data.filter(
+                    severity=severity
+                )
+
+            total_count = data.count()
+
+            results = data[:20]
+
+
+        # DOCKER
+
+        elif 'docker' in question:
+
+            data = DockerVulnerability.objects.all()
+
+            if severity:
+
+                data = data.filter(
+                    severity=severity
+                )
+
+            total_count = data.count()
+
+            results = data[:20]
+
+
+        # AWS INSPECTOR
+
+        elif 'aws' in question or 'inspector' in question:
+
+            data = AWSInspectorFinding.objects.using(
+                'aws_db'
+            ).all()
+
+            if severity:
+
+                severity_map = {
+                    'CRITICAL': 'Critical',
+                    'HIGH': 'High',
+                    'MEDIUM': 'Medium',
+                    'LOW': 'Low',
+                }
+
+                data = data.filter(
+                    severity=severity_map[severity]
+                )
+
+            total_count = data.count()
+
+            results = data[:20]
+
+
+        # EC2
+
+        elif 'ec2' in question:
+
+            data = AWSEC2Instance.objects.using(
+                'aws_db'
+            ).all()
+
+            total_count = data.count()
+
+            results = data[:20]
+
+
+        # S3
+
+        elif 's3' in question:
+
+            if severity:
+
+                results = [
+                    'S3 buckets do not support severity filtering.'
+                ]
+
+            else:
+
+                data = AWSS3Bucket.objects.using(
+                    'aws_db'
+                ).all()
+
+                total_count = data.count()
+
+                results = data[:20]
+
+
+        # UNKNOWN QUESTION
+
+        else:
+
+            results = [
+                'Sorry, I can only answer questions related to Source Code, Docker, AWS, EC2 and S3.'
+            ]
+
+
+    return render(request, 'ai.html', {
+        'question': question,
+        'results': results,
+        'total_count': total_count
+    })            
