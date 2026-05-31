@@ -2,134 +2,80 @@
 
 ## Overview
 
-The Vulnerabilities Dashboard is a Django-based web application that provides a centralized view of security findings from multiple security domains.
+The Vulnerabilities Dashboard is a Django-based application that provides a centralized view of security findings from multiple sources.
 
-The dashboard consolidates findings from different sources and presents them through a user-friendly interface with drill-down capabilities for detailed investigation.
+The dashboard currently supports:
 
-## Features
+* Source Code Security Findings
+* Docker Security Findings
+* AWS Security Findings
 
-### Source Code Security
+Each finding supports drill-down functionality for detailed investigation.
 
-* Displays source code vulnerability findings.
-* Provides visibility into application security issues.
+---
 
-### Docker Security
+## Deployment
 
-* Displays Docker image vulnerability findings.
-* Categorizes vulnerabilities based on severity levels.
-* Supports drill-down analysis of affected images and packages.
+The application is deployed on an on-premises server using Docker Compose.
 
-### AWS Security
+Server Access:
 
-* Displays AWS security findings collected from cloud resources.
-* Provides visibility into cloud security risks and misconfigurations.
-* Supports drill-down analysis for detailed investigation of findings.
+ssh optit@10.10.30.93
 
-## Architecture
+Application Deployment:
 
-### Frontend
+docker compose up -d --build
 
-* HTML
-* Bootstrap
+---
 
-### Backend
+## Application Stack
 
-* Django (Python)
+### Django (Python)
 
-### Database
-
-* PostgreSQL
-
-### Containerization
-
-* Docker
-* Docker Compose
-
-### Cloud Inventory Source
-
-* Steampipe AWS Plugin
-
-## Data Flow
-
-Security Data Sources
-↓
-PostgreSQL
-↓
-Django Application
-↓
-Vulnerabilities Dashboard
-
-The dashboard retrieves security findings from PostgreSQL and presents them through an interactive web interface.
-
-## Drill-Down Functionality
-
-Each finding displayed on the dashboard supports detailed investigation.
-
-Example:
-
-Dashboard
-→ Security Findings
-→ Selected Finding
-→ Detailed Resource Information
-
-This enables users to move from high-level summaries to resource-level details for analysis and remediation.
-
-## Project Structure
-
-django-dashboard/
-
-* dashboard/
-
-  * templates/
-  * views.py
-  * models.py
-  * admin.py
-
-* vuln_dashboard/
-
-  * settings.py
-  * urls.py
-  * wsgi.py
-
-* docker-compose.yml
-
-* Dockerfile
-
-* requirements.txt
-
-* manage.py
-
-## Key Components
-
-### views.py
-
-Contains the application logic and database queries used to retrieve and display findings.
-
-### templates/
-
-Contains HTML templates used for dashboard pages and detailed findings views.
-
-### urls.py
-
-Defines application routing and navigation.
+Backend application framework responsible for dashboard rendering, data processing, and drill-down functionality.
 
 ### PostgreSQL
 
-Stores vulnerability and cloud inventory data.
+Stores security findings and inventory data consumed by the dashboard.
 
 ### Docker Compose
 
-Used for application deployment and service orchestration.
+Used to deploy and manage application services.
 
-## Future Enhancements
+### HTML / Bootstrap
 
-* Additional security integrations
-* Risk scoring and prioritization
-* User authentication and authorization
-* Export and reporting capabilities
-* Historical trend analysis
+Used to build the dashboard user interface.
+
+---
+
+## Application Workflow
+
+Security Findings Data
+→ PostgreSQL
+→ Django Application
+→ Vulnerabilities Dashboard
+
+The dashboard retrieves findings from PostgreSQL and presents them through a web-based interface.
+
+---
+
+## Supported Modules
+
+### Source Code
+
+Displays source code security findings.
+
+### Docker
+
+Displays Docker security findings.
+
+### AWS
+
+Displays AWS security findings with detailed drill-down views for investigation.
+
+---
 
 ## Version
 
-Current Release: 1.0
+Current Version: 1.0
 
