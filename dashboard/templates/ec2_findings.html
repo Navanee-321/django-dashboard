@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>EC2 Security Findings</h2>
+
+<table class="table table-bordered">
+
+    <thead>
+        <tr>
+            <th>Severity</th>
+            <th>Finding</th>
+            <th>Count</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+    {% for item in findings %}
+
+        <tr>
+
+            <td>{{ item.severity }}</td>
+
+            <td>{{ item.title }}</td>
+
+            <td>
+
+                {% if item.title == 'EC2 Instances With Public IP' %}
+
+                    <a href="/ec2-details/?type=public_ip">
+                        {{ item.count }}
+                    </a>
+
+                {% else %}
+
+                    {{ item.count }}
+
+                {% endif %}
+
+            </td>
+
+        </tr>
+
+    {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}

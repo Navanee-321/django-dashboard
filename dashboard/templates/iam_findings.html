@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>IAM Security Findings</h2>
+
+<table class="table table-bordered">
+
+    <thead>
+        <tr>
+            <th>Severity</th>
+            <th>Finding</th>
+            <th>Count</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+    {% for item in findings %}
+
+        <tr>
+
+            <td>{{ item.severity }}</td>
+
+            <td>{{ item.title }}</td>
+
+            <td>
+
+                {% if item.title == 'Users Without MFA' %}
+
+                    <a href="/iam-details/?type=no_mfa">
+                        {{ item.count }}
+                    </a>
+
+                {% elif item.title == 'Users With Administrator Access' %}
+
+                    <a href="/iam-details/?type=admin">
+                        {{ item.count }}
+                    </a>
+
+                {% else %}
+
+                    {{ item.count }}
+
+                {% endif %}
+
+            </td>
+
+        </tr>
+
+    {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}

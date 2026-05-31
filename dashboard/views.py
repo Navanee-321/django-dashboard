@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from django.db import connections
+from django.http import HttpResponse
 
 from .models import (
     SourceCodeVulnerability,
@@ -98,28 +100,48 @@ def aws_home(request):
     services = [
 
         {
-            'name': 'Inspector',
-            'url': '/aws/inspector/',
-            'description': 'AWS Inspector Vulnerability Findings'
+            'name': 'Inspector Findings',
+            'description': 'AWS Inspector vulnerabilities',
+            'url': '/aws/inspector/'
         },
 
         {
-            'name': 'EC2',
-            'url': '/ec2/',
-            'description': 'AWS EC2 Inventory'
+            'name': 'IAM Findings',
+            'description': 'IAM security findings',
+            'url': '/iam-findings/'
         },
 
         {
-            'name': 'S3',
-            'url': '/s3/',
-            'description': 'AWS S3 Bucket Inventory'
+            'name': 'EC2 Findings',
+            'description': 'EC2 security findings',
+            'url': '/ec2-findings/'
         },
+
+        {
+            'name': 'S3 Findings',
+            'description': 'S3 security findings',
+            'url': '/s3-findings/'
+        },
+
+        {
+            'name': 'VPC Findings',
+            'description': 'VPC security findings',
+            'url': '/vpc-findings/'
+        },
+
+        {
+            'name': 'CloudFront Findings',
+            'description': 'CloudFront security findings',
+            'url': '/cloudfront-findings/'
+        }
 
     ]
 
-    return render(request, 'aws_home.html', {
-        'services': services
-    })
+    return render(
+        request,
+        'aws_home.html',
+        {'services': services}
+    )
 
 def source_dashboard(request):
 
@@ -467,3 +489,609 @@ def ai_assistant(request):
         'results': results,
         'total_count': total_count
     })            
+
+def ec2_findings(request):
+
+    findings = []
+
+    with connections['aws_db'].cursor() as cursor:
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM aws_2.aws_ec2_instance
+            WHERE public_ip_address IS NOT NULL
+        """)
+
+        public_ip_count = cursor.fetchone()[0]
+
+        findings.append({
+            'severity': 'HIGH',
+            'title': 'EC2 Instances With Public IP',
+            'count': public_ip_count
+        })
+
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM aws_2.aws_vpc_security_group_rule
+            WHERE cidr_ipv4 = '0.0.0.0/0'
+            AND from_port = 22
+        """)
+
+        ssh_count = cursor.fetchone()[0]
+
+        findings.append({
+            'severity': 'CRITICAL',
+            'title': 'SSH Open To Internet',
+            'count': ssh_count
+        })
+
+    return render(
+        request,
+        'ec2_findings.html',
+        {'findings': findings}
+    )
+
+def iam_findings(request):
+
+    findings = []
+
+    with connections['aws_db'].cursor() as cursor:
+
+        # Users without MFA
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM aws_2.aws_iam_user
+            WHERE mfa_enabled = false
+        """)
+
+        mfa_count = cursor.fetchone()[0]
+
+        findings.append({
+            'severity': 'HIGH',
+            'title': 'Users Without MFA',
+            'count': mfa_count
+        })
+
+
+        # Administrator Access
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM aws_2.aws_iam_user
+            WHERE attached_policy_arns::text
+            ILIKE '%AdministratorAccess%'
+        """)
+
+        admin_count = cursor.fetchone()[0]
+
+        findings.append({
+            'severity': 'MEDIUM',
+            'title': 'Users With Administrator Access',
+            'count': admin_count
+        })
+
+    return render(
+        request,
+        'iam_findings.html',
+        {'findings': findings}
+    )
+
+def s3_findings(request):
+
+    findings = []
+
+    with connections['aws_db'].cursor() as cursor:
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM aws_2.aws_s3_bucket
+            WHERE bucket_policy_is_public = true
+        """)
+
+        findings.append({
+            'severity': 'CRITICAL',
+            'title': 'Public S3 Buckets',
+            'count': cursor.fetchone()[0]
+        })
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM aws_2.aws_s3_bucket
+            WHERE versioning_enabled = false
+        """)
+
+        findings.append({
+            'severity': 'MEDIUM',
+            'title': 'Versioning Disabled',
+            'count': cursor.fetchone()[0]
+        })
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM aws_2.aws_s3_bucket
+            WHERE block_public_acls = false
+        """)
+
+        findings.append({
+            'severity': 'HIGH',
+            'title': 'Block Public ACLs Disabled',
+            'count': cursor.fetchone()[0]
+        })
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM aws_2.aws_s3_bucket
+            WHERE block_public_policy = false
+        """)
+
+        findings.append({
+            'severity': 'HIGH',
+            'title': 'Block Public Policy Disabled',
+            'count': cursor.fetchone()[0]
+        })
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM aws_2.aws_s3_bucket
+            WHERE restrict_public_buckets = false
+        """)
+
+        findings.append({
+            'severity': 'HIGH',
+            'title': 'Restrict Public Buckets Disabled',
+            'count': cursor.fetchone()[0]
+        })
+
+    return render(
+        request,
+        's3_findings.html',
+        {'findings': findings}
+    )
+def vpc_findings(request):
+
+    findings = []
+
+    with connections['aws_db'].cursor() as cursor:
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM aws_2.aws_vpc_security_group_rule
+            WHERE cidr_ipv4 = '0.0.0.0/0'
+            AND from_port = 22
+        """)
+
+        findings.append({
+            'severity': 'CRITICAL',
+            'title': 'SSH Open To Internet',
+            'count': cursor.fetchone()[0]
+        })
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM aws_2.aws_vpc_security_group_rule
+            WHERE cidr_ipv4 = '0.0.0.0/0'
+            AND from_port = 3389
+        """)
+
+        findings.append({
+            'severity': 'CRITICAL',
+            'title': 'RDP Open To Internet',
+            'count': cursor.fetchone()[0]
+        })
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM aws_2.aws_vpc_security_group_rule
+            WHERE cidr_ipv4 = '0.0.0.0/0'
+            AND ip_protocol = '-1'
+        """)
+
+        findings.append({
+            'severity': 'CRITICAL',
+            'title': 'All Traffic Open To Internet',
+            'count': cursor.fetchone()[0]
+        })
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM aws_2.aws_vpc_security_group_rule
+            WHERE cidr_ipv4 = '0.0.0.0/0'
+            AND from_port = 80
+        """)
+
+        findings.append({
+            'severity': 'MEDIUM',
+            'title': 'HTTP Open To Internet',
+            'count': cursor.fetchone()[0]
+        })
+
+    return render(
+        request,
+        'vpc_findings.html',
+        {'findings': findings}
+    )
+
+
+def cloudfront_findings(request):
+
+    findings = []
+
+    with connections['aws_db'].cursor() as cursor:
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM aws_2.aws_cloudfront_distribution
+            WHERE origins::text ILIKE '%http-only%'
+        """)
+
+        findings.append({
+            'severity': 'CRITICAL',
+            'title': 'Origin Uses HTTP Only',
+            'count': cursor.fetchone()[0]
+        })
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM aws_2.aws_cloudfront_distribution
+            WHERE logging::text ILIKE '%"Enabled": false%'
+        """)
+
+        findings.append({
+            'severity': 'HIGH',
+            'title': 'CloudFront Logging Disabled',
+            'count': cursor.fetchone()[0]
+        })
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM aws_2.aws_cloudfront_distribution
+            WHERE web_acl_id IS NULL
+            OR web_acl_id = ''
+        """)
+
+        findings.append({
+            'severity': 'HIGH',
+            'title': 'No WAF Attached',
+            'count': cursor.fetchone()[0]
+        })
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM aws_2.aws_cloudfront_distribution
+            WHERE restrictions::text ILIKE '%RestrictionType": "none"%'
+        """)
+
+        findings.append({
+            'severity': 'LOW',
+            'title': 'Geo Restriction Not Configured',
+            'count': cursor.fetchone()[0]
+        })
+
+    return render(
+        request,
+        'cloudfront_findings.html',
+        {'findings': findings}
+    )
+
+def iam_users_no_mfa(request):
+
+    with connections['aws_db'].cursor() as cursor:
+
+        cursor.execute("""
+            SELECT name
+            FROM aws_2.aws_iam_user
+            WHERE mfa_enabled = false
+        """)
+
+        users = cursor.fetchall()
+
+    return render(
+        request,
+        'iam_users_no_mfa.html',
+        {'users': users}
+    )
+
+
+def iam_details(request):
+
+    finding_type = request.GET.get('type')
+
+    with connections['aws_db'].cursor() as cursor:
+
+        if finding_type == 'no_mfa':
+
+            title = "IAM Users Without MFA"
+
+            cursor.execute("""
+                SELECT name
+                FROM aws_2.aws_iam_user
+                WHERE mfa_enabled = false
+            """)
+
+        elif finding_type == 'admin':
+
+            title = "IAM Users With Administrator Access"
+
+            cursor.execute("""
+                SELECT name
+                FROM aws_2.aws_iam_user
+                WHERE attached_policy_arns::text
+                ILIKE '%AdministratorAccess%'
+            """)
+
+        else:
+            return HttpResponse("Invalid finding type")
+
+        data = cursor.fetchall()
+
+    return render(
+        request,
+        'iam_details.html',
+        {
+            'title': title,
+            'data': data
+        }
+    )
+
+def ec2_details(request):
+
+    finding_type = request.GET.get('type')
+
+    with connections['aws_db'].cursor() as cursor:
+
+        if finding_type == 'public_ip':
+
+            title = "EC2 Instances With Public IP"
+
+            cursor.execute("""
+                SELECT title
+                FROM aws_2.aws_ec2_instance
+                WHERE public_ip_address IS NOT NULL
+            """)
+
+        else:
+            return HttpResponse("Invalid finding type")
+
+        data = cursor.fetchall()
+
+    return render(
+        request,
+        'ec2_details.html',
+        {
+            'title': title,
+            'data': data
+        }
+    )
+
+def ec2_details(request):
+
+    finding_type = request.GET.get('type')
+
+    with connections['aws_db'].cursor() as cursor:
+
+        if finding_type == 'public_ip':
+
+            title = "EC2 Instances With Public IP"
+
+            cursor.execute("""
+                SELECT title
+                FROM aws_2.aws_ec2_instance
+                WHERE public_ip_address IS NOT NULL
+            """)
+
+        else:
+            return HttpResponse("Invalid finding type")
+
+        data = cursor.fetchall()
+
+    return render(
+        request,
+        'details.html',
+        {
+            'title': title,
+            'data': data
+        }
+    )
+
+
+def s3_details(request):
+
+    finding_type = request.GET.get('type')
+
+    with connections['aws_db'].cursor() as cursor:
+
+        if finding_type == 'public_bucket':
+
+            title = "Public S3 Buckets"
+
+            cursor.execute("""
+                SELECT title
+                FROM aws_2.aws_s3_bucket
+                WHERE bucket_policy_is_public = true
+            """)
+
+        elif finding_type == 'versioning_disabled':
+
+            title = "Versioning Disabled"
+
+            cursor.execute("""
+                SELECT title
+                FROM aws_2.aws_s3_bucket
+                WHERE versioning_enabled = false
+            """)
+
+        elif finding_type == 'block_public_acl':
+
+            title = "Block Public ACLs Disabled"
+
+            cursor.execute("""
+                SELECT title
+                FROM aws_2.aws_s3_bucket
+                WHERE block_public_acls = false
+            """)
+
+        elif finding_type == 'block_public_policy':
+
+            title = "Block Public Policy Disabled"
+
+            cursor.execute("""
+                SELECT title
+                FROM aws_2.aws_s3_bucket
+                WHERE block_public_policy = false
+            """)
+
+        elif finding_type == 'restrict_public_bucket':
+
+            title = "Restrict Public Buckets Disabled"
+
+            cursor.execute("""
+                SELECT title
+                FROM aws_2.aws_s3_bucket
+                WHERE restrict_public_buckets = false
+            """)
+
+        else:
+            return HttpResponse("Invalid finding type")
+
+        data = cursor.fetchall()
+
+    return render(
+        request,
+        'details.html',
+        {
+            'title': title,
+            'data': data
+        }
+    )
+
+
+def vpc_details(request):
+
+    finding_type = request.GET.get('type')
+
+    with connections['aws_db'].cursor() as cursor:
+
+        if finding_type == 'ssh_open':
+
+            title = "SSH Open To Internet"
+
+            cursor.execute("""
+                SELECT group_id
+                FROM aws_2.aws_vpc_security_group_rule
+                WHERE cidr_ipv4 = '0.0.0.0/0'
+                AND from_port = 22
+            """)
+
+        elif finding_type == 'rdp_open':
+
+            title = "RDP Open To Internet"
+
+            cursor.execute("""
+                SELECT group_id
+                FROM aws_2.aws_vpc_security_group_rule
+                WHERE cidr_ipv4 = '0.0.0.0/0'
+                AND from_port = 3389
+            """)
+
+        elif finding_type == 'all_traffic':
+
+            title = "All Traffic Open To Internet"
+
+            cursor.execute("""
+                SELECT group_id
+                FROM aws_2.aws_vpc_security_group_rule
+                WHERE cidr_ipv4 = '0.0.0.0/0'
+                AND ip_protocol = '-1'
+            """)
+
+        elif finding_type == 'http_open':
+
+            title = "HTTP Open To Internet"
+
+            cursor.execute("""
+                SELECT group_id
+                FROM aws_2.aws_vpc_security_group_rule
+                WHERE cidr_ipv4 = '0.0.0.0/0'
+                AND from_port = 80
+            """)
+
+        else:
+            return HttpResponse("Invalid finding type")
+
+        data = cursor.fetchall()
+
+    return render(
+        request,
+        'details.html',
+        {
+            'title': title,
+            'data': data
+        }
+    )
+
+
+def cloudfront_details(request):
+
+    finding_type = request.GET.get('type')
+
+    title = "CloudFront Details"
+
+    with connections['aws_db'].cursor() as cursor:
+
+        if finding_type == 'http_only':
+
+            title = "Origin Uses HTTP Only"
+
+            cursor.execute("""
+                SELECT title
+                FROM aws_2.aws_cloudfront_distribution
+                WHERE origins::text ILIKE '%http-only%'
+            """)
+
+        elif finding_type == 'logging_disabled':
+
+            title = "CloudFront Logging Disabled"
+
+            cursor.execute("""
+                SELECT title
+                FROM aws_2.aws_cloudfront_distribution
+                WHERE logging::text ILIKE '%"Enabled": false%'
+            """)
+
+        elif finding_type == 'no_waf':
+
+            title = "No WAF Attached"
+
+            cursor.execute("""
+                SELECT title
+                FROM aws_2.aws_cloudfront_distribution
+                WHERE web_acl_id IS NULL
+                OR web_acl_id = ''
+            """)
+
+        elif finding_type == 'no_geo':
+
+            title = "Geo Restriction Not Configured"
+
+            cursor.execute("""
+                SELECT title
+                FROM aws_2.aws_cloudfront_distribution
+                WHERE restrictions::text ILIKE '%RestrictionType": "none"%'
+            """)
+
+        else:
+
+            return HttpResponse("Invalid finding type")
+
+        data = cursor.fetchall()
+
+    return render(
+        request,
+        'details.html',
+        {
+            'title': title,
+            'data': data
+        }
+    )

@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>VPC Security Findings</h2>
+
+<table class="table table-bordered">
+
+```
+<thead>
+    <tr>
+        <th>Severity</th>
+        <th>Finding</th>
+        <th>Count</th>
+    </tr>
+</thead>
+
+<tbody>
+
+{% for item in findings %}
+
+    <tr>
+
+        <td>{{ item.severity }}</td>
+
+        <td>{{ item.title }}</td>
+
+        <td>
+
+            {% if item.title == 'SSH Open To Internet' %}
+
+                <a href="/vpc-details/?type=ssh_open">
+                    {{ item.count }}
+                </a>
+
+            {% elif item.title == 'RDP Open To Internet' %}
+
+                <a href="/vpc-details/?type=rdp_open">
+                    {{ item.count }}
+                </a>
+
+            {% elif item.title == 'All Traffic Open To Internet' %}
+
+                <a href="/vpc-details/?type=all_traffic">
+                    {{ item.count }}
+                </a>
+
+            {% elif item.title == 'HTTP Open To Internet' %}
+
+                <a href="/vpc-details/?type=http_open">
+                    {{ item.count }}
+                </a>
+
+            {% else %}
+
+                {{ item.count }}
+
+            {% endif %}
+
+        </td>
+
+    </tr>
+
+{% endfor %}
+
+</tbody>
+```
+
+</table>
+
+{% endblock %}
+

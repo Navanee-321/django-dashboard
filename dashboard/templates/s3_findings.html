@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>S3 Security Findings</h2>
+
+<table class="table table-bordered">
+
+```
+<thead>
+    <tr>
+        <th>Severity</th>
+        <th>Finding</th>
+        <th>Count</th>
+    </tr>
+</thead>
+
+<tbody>
+
+{% for item in findings %}
+
+    <tr>
+
+        <td>{{ item.severity }}</td>
+
+        <td>{{ item.title }}</td>
+
+        <td>
+
+            {% if item.title == 'Public S3 Buckets' %}
+
+                <a href="/s3-details/?type=public_bucket">
+                    {{ item.count }}
+                </a>
+
+            {% elif item.title == 'Versioning Disabled' %}
+
+                <a href="/s3-details/?type=versioning_disabled">
+                    {{ item.count }}
+                </a>
+
+            {% elif item.title == 'Block Public ACLs Disabled' %}
+
+                <a href="/s3-details/?type=block_public_acl">
+                    {{ item.count }}
+                </a>
+
+            {% elif item.title == 'Block Public Policy Disabled' %}
+
+                <a href="/s3-details/?type=block_public_policy">
+                    {{ item.count }}
+                </a>
+
+            {% elif item.title == 'Restrict Public Buckets Disabled' %}
+
+                <a href="/s3-details/?type=restrict_public_bucket">
+                    {{ item.count }}
+                </a>
+
+            {% else %}
+
+                {{ item.count }}
+
+            {% endif %}
+
+        </td>
+
+    </tr>
+
+{% endfor %}
+
+</tbody>
+```
+
+</table>
+
+{% endblock %}
+

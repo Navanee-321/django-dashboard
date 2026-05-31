@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>IAM Users Without MFA</h2>
+
+<table class="table table-bordered">
+
+    <thead>
+        <tr>
+            <th>User Name</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+    {% for user in users %}
+
+        <tr>
+            <td>{{ user.0 }}</td>
+        </tr>
+
+    {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}

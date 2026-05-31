@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>CloudFront Security Findings</h2>
+
+<table class="table table-bordered">
+
+    <thead>
+        <tr>
+            <th>Severity</th>
+            <th>Finding</th>
+            <th>Count</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+    {% for item in findings %}
+
+        <tr>
+
+            <td>{{ item.severity }}</td>
+
+            <td>{{ item.title }}</td>
+
+            <td>
+
+                {% if item.title == 'Origin Uses HTTP Only' %}
+
+                    <a href="/cloudfront-details/?type=http_only">
+                        {{ item.count }}
+                    </a>
+
+                {% elif item.title == 'CloudFront Logging Disabled' %}
+
+                    <a href="/cloudfront-details/?type=logging_disabled">
+                        {{ item.count }}
+                    </a>
+
+                {% elif item.title == 'No WAF Attached' %}
+
+                    <a href="/cloudfront-details/?type=no_waf">
+                        {{ item.count }}
+                    </a>
+
+                {% elif item.title == 'Geo Restriction Not Configured' %}
+
+                    <a href="/cloudfront-details/?type=no_geo">
+                        {{ item.count }}
+                    </a>
+
+                {% else %}
+
+                    {{ item.count }}
+
+                {% endif %}
+
+            </td>
+
+        </tr>
+
+    {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}
